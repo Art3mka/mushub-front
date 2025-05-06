@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../store/authSlice";
 
 const Header = () => {
-  const { isAuthenticated, user } = useSelector((state) => state.auth);
+  const { isAuthenticated, username } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -14,7 +14,7 @@ const Header = () => {
     navigate("/login");
   };
   return (
-    <Navbar bg="dark" variant="dark" expand="lg" className="mb-4">
+    <Navbar bg="warning" variant="light" expand="lg" className="mb-4">
       <Container>
         <Navbar.Brand as={Link} to="/" className="d-flex align-items-center">
           MusHub
@@ -27,7 +27,9 @@ const Header = () => {
           {isAuthenticated && (
             <Form className="d-flex mx-3" style={{ width: "300px" }}>
               <Form.Control type="search" placeholder="Найти трек или альбом" className="me-2" aria-label="Search" />
-              <Button variant="outline-light">{/* <i className="bi bi-search"></i> */}</Button>
+              <Button variant="outline-light">
+                <i className="bi bi-search"></i>
+              </Button>
             </Form>
           )}
 
@@ -37,8 +39,9 @@ const Header = () => {
                 {/* Меню для авторизованных */}
                 <Nav.Link as={Link} to="/profile" className="d-flex align-items-center">
                   <i className="bi bi-person-circle me-1"></i>
-                  {user?.name}
+                  {username}
                 </Nav.Link>
+
                 <Nav.Link as={Link} to="/playlists">
                   <i className="bi bi-collection me-1"></i>
                   Плейлисты
@@ -57,10 +60,6 @@ const Header = () => {
                 <Nav.Link as={Link} to="/register">
                   <i className="bi bi-person-plus me-1"></i>
                   Регистрация
-                </Nav.Link>
-                <Nav.Link as={Link} to="/media">
-                  {/* <i className="bi bi-person-plus me-1"></i> */}
-                  Музыка
                 </Nav.Link>
               </>
             )}

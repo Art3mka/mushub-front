@@ -2,28 +2,23 @@ import { useState } from "react";
 import { Form, Button, Alert, Card } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useDispatch } from "react-redux";
-import { setCredentials } from "../store/authSlice";
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({ name: "", email: "", password: "" });
   const [error, setError] = useState("");
-  const dispatch = useDispatch();
+
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       console.log(formData);
-      const res = await axios.post("http://localhost:8000/api/auth/register", formData);
-      dispatch(setCredentials(res.data));
+      await axios.post("http://localhost:8000/api/auth/register", formData);
       navigate("/login");
     } catch (err) {
       setError(err.response?.data?.error || "Ошибка регистрации");
     }
   };
-
-  //   return <div>LoginPage</div>;
 
   return (
     <div className="d-flex justify-content-center mt-5">

@@ -14,9 +14,15 @@ const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log(formData);
       const res = await axios.post("http://localhost:8000/api/auth/login", formData);
-      dispatch(setCredentials(res.data));
+      console.log(res.data);
+      dispatch(
+        setCredentials({
+          userId: res.data.userId,
+          username: res.data.username,
+          token: res.data.token,
+        })
+      );
       localStorage.setItem("token", res.data.token);
       navigate("/");
     } catch (err) {

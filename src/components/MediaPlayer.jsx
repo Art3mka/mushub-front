@@ -3,23 +3,26 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import ReactPlayer from "react-player";
 
+import LikeButton from "./LikeButton";
+import CommentsSection from "./CommentsSection";
+import AddToPlaylist from "./AddToPlaylist";
+
 const MediaPlayer = () => {
-  const { id } = useParams();
+  const { mediaId } = useParams();
   const [media, setMedia] = useState(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchMedia = async () => {
       try {
-        const res = await axios.get(`http://localhost:8000/api/media/${id}`);
+        const res = await axios.get(`http://localhost:8000/api/media/${mediaId}`);
         setMedia(res.data);
-        console.log(res.data);
       } catch (err) {
         setError(err.response?.data?.error || "Ошибка загрузки");
       }
     };
     fetchMedia();
-  }, [id]);
+  }, [mediaId]);
 
   if (error) return <div className="alert alert-danger">{error}</div>;
   if (!media) return <div>Загрузка...</div>;
@@ -38,6 +41,16 @@ const MediaPlayer = () => {
             <source src={`http://localhost:8000/media/${media.filename}`} type={media.mimetype} />
           </audio>
         )}
+      </div>
+      <div className="mt-4">
+        <LikeButton
+          mediaId={media._id}
+          initialLikes={media.likes}
+          // initialLiked={/* Проверяем, лайкнул ли текущий пользователь */}
+          initialLiked={false}
+        />
+        <AddToPlaylist mediaId={media._id} />
+        <CommentsSection mediaId={media._id} />
       </div>
     </div>
   );
