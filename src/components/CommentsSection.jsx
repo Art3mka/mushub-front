@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 const CommentsSection = ({ mediaId }) => {
   const [comments, setComments] = useState([]);
   const [text, setText] = useState("");
-  const { isAuthenticated, username } = useSelector((state) => state.auth);
+  const { isAuthenticated, username, token } = useSelector((state) => state.auth);
 
   useEffect(() => {
     const fetchComments = async () => {
@@ -26,7 +26,7 @@ const CommentsSection = ({ mediaId }) => {
       const res = await axios.post(
         `http://localhost:8000/api/media/comment/${mediaId}`,
         { text },
-        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       setComments([res.data, ...comments]);
       setText("");

@@ -1,19 +1,21 @@
 import { useState, useEffect } from "react";
 import { Dropdown, Modal, ListGroup } from "react-bootstrap";
 import axios from "axios";
+import { useSelector } from "react-redux";
 import CreatePlaylistModal from "./CreatePlaylistModal";
 
-const AddToPlaylist = ({ mediaId }) => {
+const AddToPlaylist = ({ className, mediaId }) => {
   const [playlists, setPlaylists] = useState([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const { isAuthenticated, token } = useSelector((state) => state.auth);
 
   useEffect(() => {
     const fetchPlaylists = async () => {
       try {
         const res = await axios.get("http://localhost:8000/api/playlists/my", {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          headers: { Authorization: `Bearer ${token}` },
         });
-        console.log(res.data);
+
         setPlaylists(res.data);
       } catch (err) {
         console.error(err);
@@ -28,7 +30,7 @@ const AddToPlaylist = ({ mediaId }) => {
         `http://localhost:8000/api/playlists/${playlistId}/add/${mediaId}`,
         {},
         {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
       alert("Добавлено в плейлист!");
@@ -39,9 +41,9 @@ const AddToPlaylist = ({ mediaId }) => {
 
   return (
     <div>
-      <Dropdown>
-        <Dropdown.Toggle variant="outline-secondary" size="sm">
-          Добавить в плейлист
+      <Dropdown className={className}>
+        <Dropdown.Toggle disabled={!isAuthenticated} variant="outline-secondary" size="sm">
+          {isAuthenticated ? "Добавить в плейлист" : "Войдите для добавления в плейлист"}
         </Dropdown.Toggle>
         <Dropdown.Menu>
           {playlists.map((playlist) => (
@@ -53,8 +55,7 @@ const AddToPlaylist = ({ mediaId }) => {
           <Dropdown.Item onClick={() => setShowCreateModal(true)}>+ Создать новый</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
-
-      <CreatePlaylistModal show={showCreateModal} onHide={() => setShowCreateModal(false)} />
+      <CreatePlaylistModal show={showCreateModal} onHide={() => setShowCreateModal(false)} />{" "}
     </div>
   );
 };

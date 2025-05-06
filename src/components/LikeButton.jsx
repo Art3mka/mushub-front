@@ -1,10 +1,31 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import axios from "axios";
+import { useSelector } from "react-redux";
 
-const LikeButton = ({ mediaId, initialLikes, initialLiked }) => {
-  const [liked, setLiked] = useState(initialLiked);
+const LikeButton = ({ className, mediaId, initialLikes }) => {
+  const [liked, setLiked] = useState(false);
   const [likes, setLikes] = useState(initialLikes);
+  const { token, isAuthenticated } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    const checkLikeStatus = async () => {
+      try {
+        const res = await axios.get(`http://localhost:8000/api/media/${mediaId}/check-like`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setLiked(res.data.liked);
+      } catch (err) {
+        console.error("Ошибка проверки лайка:", err);
+      }
+    };
+
+    if (isAuthenticated) {
+      checkLikeStatus();
+    }
+  }, [mediaId, isAuthenticated]);
 
   const handleLike = async () => {
     try {
@@ -12,7 +33,7 @@ const LikeButton = ({ mediaId, initialLikes, initialLiked }) => {
         `http://localhost:8000/api/media/like/${mediaId}`,
         {},
         {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
       setLiked(res.data.liked);
@@ -22,7 +43,12 @@ const LikeButton = ({ mediaId, initialLikes, initialLiked }) => {
     }
   };
   return (
-    <Button variant={liked ? "primary" : "outline-primary"} onClick={handleLike}>
+    <Button
+      className={className}
+      variant={liked ? "primary" : "outline-primary"}
+      onClick={handleLike}
+      disabled={!isAuthenticated}
+    >
       ❤️ {likes}
     </Button>
   );

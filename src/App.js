@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Container } from "react-bootstrap";
+import { Container, Spinner } from "react-bootstrap";
 import { useSelector } from "react-redux";
 
 import AuthInitializer from "./components/AuthInitializer";
@@ -8,12 +8,14 @@ import ProtectedRoute from "./HOC/ProtectedRoute";
 import Header from "./components/Header";
 import UploadForm from "./components/UploadForm";
 import MediaPlayer from "./components/MediaPlayer";
+
 import HomePage from "./pages/HomePage";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
 import MediaListPage from "./pages/MediaListPage";
 import PlaylistsPage from "./pages/PlaylistsPage";
 import MyPlaylistPage from "./pages/MyPlaylistPage";
+import ProfilePage from "./pages/ProfilePage";
 
 function App() {
   const { isLoading } = useSelector((state) => state.auth);
@@ -21,7 +23,9 @@ function App() {
   return (
     <AuthInitializer>
       {isLoading ? (
-        <div>Загрузка</div>
+        <div className="d-flex justify-content-center align-items-center vh-100">
+          <Spinner animation="border" variant="warning" />
+        </div>
       ) : (
         <Router>
           <Header />
@@ -51,6 +55,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <MyPlaylistPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <ProfilePage />
                   </ProtectedRoute>
                 }
               />

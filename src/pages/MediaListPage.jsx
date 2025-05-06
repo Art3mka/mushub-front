@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Card, Button, Row, Col } from "react-bootstrap";
+import { Card, Button, Row, Col, Spinner } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
@@ -21,7 +21,12 @@ const MediaListPage = () => {
     fetchMedia();
   }, []);
 
-  if (loading) return <div>Загрузка...</div>;
+  if (loading)
+    return (
+      <div className="d-flex justify-content-center align-items-center vh-100">
+        <Spinner animation="border" variant="warning" />
+      </div>
+    );
 
   return (
     <Row>
