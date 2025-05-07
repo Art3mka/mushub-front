@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Container, Row, Col, Card, Button, Dropdown, Modal, Form, Alert } from "react-bootstrap";
+import { Container, Row, Col, Card, Button, Dropdown, Modal, Form, Alert, Spinner } from "react-bootstrap";
 import axios from "axios";
 import ReactPlayer from "react-player";
 import { useSelector } from "react-redux";
@@ -65,16 +65,21 @@ const MyPlaylistPage = () => {
       await axios.delete(`http://localhost:8000/api/playlists/${playlistId}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
-      navigate("/playlists/my");
+      navigate("/playlists");
     } catch (err) {
       console.error(err);
     }
   };
 
   if (error) return <Alert variant="danger">{error}</Alert>;
-  if (!playlist) return <div>Загрузка...</div>;
+  if (!playlist)
+    return (
+      <div className="d-flex justify-content-center align-items-center vh-100">
+        <Spinner animation="border" variant="warning" />
+      </div>
+    );
 
-  const isOwner = playlist.authorId._id === userId;
+  const isOwner = playlist?.authorId._id === userId;
 
   return (
     <Container className="my-4">

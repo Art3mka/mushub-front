@@ -54,7 +54,7 @@ const LoginPage = () => {
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               />
             </Form.Group>
-            <Button type="submit" className="w-100 mb-3">
+            <Button type="submit" className="w-100 mb-3 bg-warning">
               Войти
             </Button>
 

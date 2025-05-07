@@ -1,12 +1,48 @@
-import { Container, Nav, Navbar, Button, Form } from "react-bootstrap";
+import { useState, useEffect } from "react";
+import { Container, Nav, Navbar, Button, Form, Modal, ListGroup, Spinner, InputGroup } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
+import axios from "axios";
 import { logout } from "../store/authSlice";
 
 const Header = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [showResults, setShowResults] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
   const { isAuthenticated, username } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  // Поиск с задержкой (debounce)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchQuery.trim().length > 1) {
+        performSearch();
+      } else {
+        setSearchResults([]);
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  const handleClose = () => {
+    setSearchQuery("");
+  };
+
+  const performSearch = async () => {
+    setIsSearching(true);
+    try {
+      const res = await axios.get(`http://localhost:8000/api/media/search?query=${encodeURIComponent(searchQuery)}`);
+      setSearchResults(res.data);
+      setShowResults(true);
+    } catch (err) {
+      console.error("Search error:", err);
+    } finally {
+      setIsSearching(false);
+    }
+  };
 
   const handleLogout = () => {
     dispatch(logout());
@@ -26,12 +62,57 @@ const Header = () => {
           {/* Поиск (только для авторизованных) */}
           {isAuthenticated && (
             <Form className="d-flex mx-3" style={{ width: "300px" }}>
-              <Form.Control type="search" placeholder="Найти трек или альбом" className="me-2" aria-label="Search" />
-              <Button variant="outline-light">
-                <i className="bi bi-search"></i>
-              </Button>
+              <Form.Group controlId="search">
+                <InputGroup>
+                  <Form.Control
+                    type="text"
+                    placeholder="Найти трек или альбом"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onFocus={() => searchQuery && setShowResults(true)}
+                    className="me-2"
+                    aria-label="Search"
+                  />
+                  <InputGroup.Text>
+                    {isSearching ? (
+                      <Spinner animation="border" variant="warning" size="sm" />
+                    ) : (
+                      <i className="bi bi-search"></i>
+                    )}
+                  </InputGroup.Text>
+                </InputGroup>
+              </Form.Group>
             </Form>
           )}
+
+          <Modal show={showResults && searchResults.length > 0} onHide={handleClose} style={{ marginTop: "40px" }}>
+            <Modal.Header closeButton>
+              <Modal.Title>Результаты поиска</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <ListGroup variant="flush">
+                {searchResults.map((media) => (
+                  <ListGroup.Item
+                    key={media._id}
+                    action
+                    onClick={() => {
+                      // Переход к треку
+                      setSearchQuery("");
+                      navigate(`/media/${media._id}`);
+                      setShowResults(false);
+                    }}
+                  >
+                    <div className="d-flex justify-content-between">
+                      <div>
+                        <strong>{media.title}</strong>
+                        <div className="text-muted small">{media.authorId.name}</div>
+                      </div>
+                    </div>
+                  </ListGroup.Item>
+                ))}
+              </ListGroup>
+            </Modal.Body>
+          </Modal>
 
           <Nav className="ms-auto">
             {isAuthenticated ? (
