@@ -73,13 +73,6 @@ const Header = () => {
                     className="me-2"
                     aria-label="Search"
                   />
-                  <InputGroup.Text>
-                    {isSearching ? (
-                      <Spinner animation="border" variant="warning" size="sm" />
-                    ) : (
-                      <i className="bi bi-search"></i>
-                    )}
-                  </InputGroup.Text>
                 </InputGroup>
               </Form.Group>
             </Form>

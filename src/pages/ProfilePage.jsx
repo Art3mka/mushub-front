@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { Tab, Tabs, Card, Row, Col, Image, Spinner } from "react-bootstrap";
 import axios from "axios";
 import MediaList from "../components/MediaList";
+import UserMediaList from "../components/UserMediaList";
 
 const ProfilePage = () => {
   const { userId } = useSelector((state) => state.auth);
@@ -26,6 +27,10 @@ const ProfilePage = () => {
     fetchProfile();
   }, [userId]);
 
+  const handleDeleteTrack = (deletedId) => {
+    setUploadedMedia((prev) => prev.filter((media) => media._id !== deletedId));
+  };
+
   if (!profile) {
     return (
       <div className="d-flex justify-content-center align-items-center vh-100">
@@ -43,7 +48,7 @@ const ProfilePage = () => {
 
       <Tabs activeKey={activeTab} onSelect={(tab) => setActiveTab(tab)} className="my-3 justify-content-center">
         <Tab eventKey="uploads" title={`Загружено (${uploadedMedia.length})`}>
-          <MediaList media={uploadedMedia} />
+          <UserMediaList media={uploadedMedia} onDelete={handleDeleteTrack} />
         </Tab>
         <Tab eventKey="likes" title={`Понравилось (${likedMedia.length})`}>
           <MediaList media={likedMedia} />
