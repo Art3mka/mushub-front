@@ -9,7 +9,6 @@ import Header from "./components/Header";
 import UploadForm from "./components/UploadForm";
 import MediaPlayer from "./components/MediaPlayer";
 
-import HomePage from "./pages/HomePage";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
 import MediaListPage from "./pages/MediaListPage";
@@ -36,6 +35,14 @@ function App() {
               <Route path="/register" element={<RegisterPage />} />
               <Route
                 path="/upload"
+                element={
+                  <ProtectedRoute>
+                    <UploadForm />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/edit/:mediaId"
                 element={
                   <ProtectedRoute>
                     <UploadForm />

@@ -3,11 +3,14 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import { Spinner } from "react-bootstrap";
 
+import usePlayLimit from "../hooks/usePlayLimit";
+
 import LikeButton from "./LikeButton";
 import CommentsSection from "./CommentsSection";
 import AddToPlaylist from "./AddToPlaylist";
 
 const MediaPlayer = () => {
+  const { checkPlayLimit } = usePlayLimit();
   const { mediaId } = useParams();
   const [media, setMedia] = useState(null);
   const [error, setError] = useState("");
@@ -22,6 +25,7 @@ const MediaPlayer = () => {
       }
     };
     fetchMedia();
+    checkPlayLimit();
   }, [mediaId]);
 
   if (error) return <div className="alert alert-danger">{error}</div>;

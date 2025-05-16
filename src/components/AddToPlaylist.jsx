@@ -10,32 +10,36 @@ const AddToPlaylist = ({ className, mediaId }) => {
   const { isAuthenticated, token } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    const fetchPlaylists = async () => {
-      try {
-        const res = await axios.get("http://localhost:8000/api/playlists/my", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+    if (isAuthenticated) {
+      const fetchPlaylists = async () => {
+        try {
+          const res = await axios.get("http://localhost:8000/api/playlists/my", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
 
-        setPlaylists(res.data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchPlaylists();
+          setPlaylists(res.data);
+        } catch (err) {
+          console.error(err);
+        }
+      };
+      fetchPlaylists();
+    }
   }, []);
 
   const handleAddToPlaylist = async (playlistId) => {
-    try {
-      await axios.post(
-        `http://localhost:8000/api/playlists/${playlistId}/add/${mediaId}`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      alert("Добавлено в плейлист!");
-    } catch (err) {
-      console.error(err);
+    if (isAuthenticated) {
+      try {
+        await axios.post(
+          `http://localhost:8000/api/playlists/${playlistId}/add/${mediaId}`,
+          {},
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        alert("Добавлено в плейлист!");
+      } catch (err) {
+        console.error(err);
+      }
     }
   };
 

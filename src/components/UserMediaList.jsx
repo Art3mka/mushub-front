@@ -1,10 +1,12 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, Button, Alert, Spinner } from "react-bootstrap";
 import axios from "axios";
 
 const UserMediaList = ({ media, onDelete }) => {
   const [loadingId, setLoadingId] = useState(null);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   const handleDelete = async (trackId) => {
     try {
@@ -25,7 +27,14 @@ const UserMediaList = ({ media, onDelete }) => {
     }
   };
 
-  console.log(media);
+  const handleEdit = async (trackId) => {
+    try {
+      console.log("edit");
+      navigate(`/edit/${trackId}`);
+    } catch (err) {
+      setError(err.response?.data?.error || "Ошибка редактирования");
+    }
+  };
 
   return (
     <div className="mt-4">
@@ -38,7 +47,7 @@ const UserMediaList = ({ media, onDelete }) => {
               <Card.Body>
                 <Card.Title>{track.title}</Card.Title>
               </Card.Body>
-              <Card.Footer>
+              <Card.Footer className="d-flex justify-content-between">
                 <Button
                   variant="outline-danger"
                   size="sm"
@@ -51,6 +60,20 @@ const UserMediaList = ({ media, onDelete }) => {
                     </>
                   ) : (
                     "Удалить"
+                  )}
+                </Button>
+                <Button
+                  variant="outline-warning"
+                  size="sm"
+                  onClick={() => handleEdit(track._id)}
+                  disabled={loadingId === track._id}
+                >
+                  {loadingId === track._id ? (
+                    <>
+                      <Spinner animation="border" size="sm" /> Редактирование
+                    </>
+                  ) : (
+                    "Редактировать"
                   )}
                 </Button>
               </Card.Footer>
