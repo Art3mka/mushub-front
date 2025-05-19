@@ -15,6 +15,7 @@ import MediaListPage from "./pages/MediaListPage";
 import PlaylistsPage from "./pages/PlaylistsPage";
 import MyPlaylistPage from "./pages/MyPlaylistPage";
 import ProfilePage from "./pages/ProfilePage";
+import CategoriesPage from "./pages/CategoriesPage";
 
 function App() {
   const { isLoading } = useSelector((state) => state.auth);
@@ -31,6 +32,7 @@ function App() {
           <Container className="my-4">
             <Routes>
               <Route path="/" element={<MediaListPage />} />
+              <Route path="/categories" element={<CategoriesPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
               <Route

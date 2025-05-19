@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { Tab, Tabs, Card, Row, Col, Image, Spinner } from "react-bootstrap";
+import { Tab, Tabs, Spinner, Button } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import MediaList from "../components/MediaList";
 import UserMediaList from "../components/UserMediaList";
@@ -48,6 +49,11 @@ const ProfilePage = () => {
 
       <Tabs activeKey={activeTab} onSelect={(tab) => setActiveTab(tab)} className="my-3 justify-content-center">
         <Tab eventKey="uploads" title={`Загружено (${uploadedMedia.length})`}>
+          <Link to={`/upload`}>
+            <Button className="mt-2 w-100" variant="primary">
+              <i className="bi bi-plus me-1"></i>Добавить трек
+            </Button>
+          </Link>
           <UserMediaList media={uploadedMedia} onDelete={handleDeleteTrack} />
         </Tab>
         <Tab eventKey="likes" title={`Понравилось (${likedMedia.length})`}>

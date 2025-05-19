@@ -26,7 +26,7 @@ const MediaPlayer = () => {
     };
     fetchMedia();
     checkPlayLimit();
-  }, [mediaId]);
+  }, [mediaId, checkPlayLimit]);
 
   if (error) return <div className="alert alert-danger">{error}</div>;
   if (!media)
@@ -41,6 +41,9 @@ const MediaPlayer = () => {
       <h2>
         {media.title} - {media.authorId.name}
       </h2>
+      <p>
+        Категория: <strong>{media.categoryId.title}</strong>
+      </p>
       <p>Прослушиваний: {media.listens}</p>
 
       <div className="player-wrapper">

@@ -37,10 +37,12 @@ const MediaListPage = () => {
               <Card.Title>
                 {item.title} - {item.authorId.name}
               </Card.Title>
-              <Card.Text>Прослушиваний: {item.listens}</Card.Text>
+              <Card.Text>
+                <span>❤️ {item.likes}</span> | <span>🎧 {item.listens}</span>
+              </Card.Text>
               <Link to={`/media/${item._id}`}>
-                <Button variant="primary">
-                  <i className="bi bi-play"></i>Слушать
+                <Button className="w-100" variant="primary">
+                  <i className="bi bi-play me-1"></i>Слушать
                 </Button>
               </Link>
             </Card.Body>

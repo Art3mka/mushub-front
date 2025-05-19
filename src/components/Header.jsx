@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Container, Nav, Navbar, Button, Form, Modal, ListGroup, Spinner, InputGroup } from "react-bootstrap";
+import { Container, Nav, Navbar, Button, Form, Modal, ListGroup, InputGroup } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
@@ -9,10 +9,19 @@ const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [showResults, setShowResults] = useState(false);
-  const [isSearching, setIsSearching] = useState(false);
   const { isAuthenticated, username } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const performSearch = async () => {
+    try {
+      const res = await axios.get(`http://localhost:8000/api/media/search?query=${encodeURIComponent(searchQuery)}`);
+      setSearchResults(res.data);
+      setShowResults(true);
+    } catch (err) {
+      console.error("Search error:", err);
+    }
+  };
 
   // Поиск с задержкой (debounce)
   useEffect(() => {
@@ -29,19 +38,6 @@ const Header = () => {
 
   const handleClose = () => {
     setSearchQuery("");
-  };
-
-  const performSearch = async () => {
-    setIsSearching(true);
-    try {
-      const res = await axios.get(`http://localhost:8000/api/media/search?query=${encodeURIComponent(searchQuery)}`);
-      setSearchResults(res.data);
-      setShowResults(true);
-    } catch (err) {
-      console.error("Search error:", err);
-    } finally {
-      setIsSearching(false);
-    }
   };
 
   const handleLogout = () => {
@@ -108,6 +104,10 @@ const Header = () => {
           </Modal>
 
           <Nav className="ms-auto">
+            <Nav.Link as={Link} to="/categories" className="d-flex align-items-center">
+              {/* <i className="bi bi-person-circle me-1"></i> */}
+              Топ хитов!
+            </Nav.Link>
             {isAuthenticated ? (
               <>
                 {/* Меню для авторизованных */}
