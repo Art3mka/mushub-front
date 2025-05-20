@@ -46,10 +46,10 @@ const Header = () => {
     navigate("/login");
   };
   return (
-    <Navbar bg="warning" variant="light" expand="lg" className="mb-4">
+    <Navbar bg="warning" variant="light" expand="lg">
       <Container>
         <Navbar.Brand as={Link} to="/" className="d-flex align-items-center">
-          MusHub
+          <span className="font-weight-bold">MusHub</span>
         </Navbar.Brand>
 
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -103,10 +103,6 @@ const Header = () => {
           </Modal>
 
           <Nav className="ms-auto">
-            <Nav.Link as={Link} to="/categories" className="d-flex align-items-center">
-              <i className="bi bi-fire me-1"></i>
-              Топ хитов!
-            </Nav.Link>
             {isAuthenticated ? (
               <>
                 {/* Меню для авторизованных */}

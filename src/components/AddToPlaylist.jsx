@@ -59,7 +59,7 @@ const AddToPlaylist = ({ className, mediaId }) => {
           <Dropdown.Item onClick={() => setShowCreateModal(true)}>+ Создать новый</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
-      <CreatePlaylistModal show={showCreateModal} onHide={() => setShowCreateModal(false)} />{" "}
+      <CreatePlaylistModal show={showCreateModal} onHide={() => setShowCreateModal(false)} />
     </div>
   );
 };

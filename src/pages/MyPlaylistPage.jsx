@@ -82,7 +82,7 @@ const MyPlaylistPage = () => {
   const isOwner = playlist?.authorId._id === userId;
 
   return (
-    <Container className="my-4">
+    <>
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h1>{playlist.name}</h1>
@@ -183,7 +183,7 @@ const MyPlaylistPage = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-    </Container>
+    </>
   );
 };
 

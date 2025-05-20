@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import { Card, Container, Button, Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import CreatePlaylistModal from "../components/CreatePlaylistModal";
 
 const PlaylistsPage = () => {
   const [playlists, setPlaylists] = useState([]);
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   useEffect(() => {
     const fetchPlaylists = async () => {
@@ -22,8 +24,13 @@ const PlaylistsPage = () => {
   }, []);
 
   return (
-    <Container>
+    <>
       <h1 className="my-4">Мои плейлисты</h1>
+      {playlists.length > 0 && (
+        <Button className="mb-3" onClick={() => setShowCreateModal(true)}>
+          Создать плейлист
+        </Button>
+      )}
       <Row>
         {playlists.length > 0 ? (
           playlists.map((playlist) => (
@@ -44,10 +51,11 @@ const PlaylistsPage = () => {
             </Col>
           ))
         ) : (
-          <h4>Создайте свой первый плейлист!</h4>
+          <Button onClick={() => setShowCreateModal(true)}>Создайте свой первый плейлист!</Button>
         )}
       </Row>
-    </Container>
+      <CreatePlaylistModal show={showCreateModal} onHide={() => setShowCreateModal(false)} />
+    </>
   );
 };
 

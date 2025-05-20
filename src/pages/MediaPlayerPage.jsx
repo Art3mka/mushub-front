@@ -5,11 +5,11 @@ import { Spinner } from "react-bootstrap";
 
 import usePlayLimit from "../hooks/usePlayLimit";
 
-import LikeButton from "./LikeButton";
-import CommentsSection from "./CommentsSection";
-import AddToPlaylist from "./AddToPlaylist";
+import LikeButton from "../components/LikeButton";
+import CommentsSection from "../components/CommentsSection";
+import AddToPlaylist from "../components/AddToPlaylist";
 
-const MediaPlayer = () => {
+const MediaPlayerPage = () => {
   const { checkPlayLimit } = usePlayLimit();
   const { mediaId } = useParams();
   const [media, setMedia] = useState(null);
@@ -26,7 +26,7 @@ const MediaPlayer = () => {
     };
     fetchMedia();
     checkPlayLimit();
-  }, [mediaId, checkPlayLimit]);
+  }, [mediaId]);
 
   if (error) return <div className="alert alert-danger">{error}</div>;
   if (!media)
@@ -60,4 +60,4 @@ const MediaPlayer = () => {
   );
 };
 
-export default MediaPlayer;
+export default MediaPlayerPage;

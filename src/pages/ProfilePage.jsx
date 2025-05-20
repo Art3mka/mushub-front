@@ -41,7 +41,7 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="profile-container">
+    <>
       <div className="profile-header text-center py-2 bg-light">
         <h2>{profile.name}</h2>
         <p className="text-muted">Зарегистрирован {new Date(profile.createdAt).toLocaleDateString()}</p>
@@ -60,7 +60,7 @@ const ProfilePage = () => {
           <MediaList media={likedMedia} />
         </Tab>
       </Tabs>
-    </div>
+    </>
   );
 };
 

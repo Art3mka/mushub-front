@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Form, Button, Alert, Spinner, Dropdown } from "react-bootstrap";
 import axios from "axios";
 
-const UploadForm = () => {
+const UploadPage = () => {
   const { mediaId } = useParams();
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
@@ -134,4 +134,4 @@ const UploadForm = () => {
   );
 };
 
-export default UploadForm;
+export default UploadPage;

@@ -8,17 +8,19 @@ import ProtectedRoute from "./HOC/ProtectedRoute";
 import AdminRoute from "./HOC/AdminRoute";
 
 import Header from "./components/Header";
-import UploadForm from "./components/UploadForm";
-import MediaPlayer from "./components/MediaPlayer";
+import Footer from "./components/Footer";
+import MediaPlayerPage from "./pages/MediaPlayerPage";
 
+import UploadPage from "./pages/UploadPage";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
-import MediaListPage from "./pages/MediaListPage";
 import PlaylistsPage from "./pages/PlaylistsPage";
 import MyPlaylistPage from "./pages/MyPlaylistPage";
 import ProfilePage from "./pages/ProfilePage";
-import CategoriesPage from "./pages/CategoriesPage";
+import HomePage from "./pages/HomePage";
 import AdminPage from "./pages/admin/AdminPage";
+import NotFoundPage from "./pages/NotFoundPage";
+import RestrictedPage from "./pages/RestrictedPage";
 
 function App() {
   const { isLoading } = useSelector((state) => state.auth);
@@ -31,65 +33,68 @@ function App() {
         </div>
       ) : (
         <Router>
-          <Header />
-          <Container className="my-4">
-            <Routes>
-              <Route path="/" element={<MediaListPage />} />
-              <Route path="/categories" element={<CategoriesPage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
-              <Route
-                path="/upload"
-                element={
-                  <ProtectedRoute>
-                    <UploadForm />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/edit/:mediaId"
-                element={
-                  <ProtectedRoute>
-                    <UploadForm />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/playlists"
-                element={
-                  <ProtectedRoute>
-                    <PlaylistsPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/playlists/:playlistId"
-                element={
-                  <ProtectedRoute>
-                    <MyPlaylistPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/profile"
-                element={
-                  <ProtectedRoute>
-                    <ProfilePage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="/media" element={<MediaListPage />} />
-              <Route path="/media/:mediaId" element={<MediaPlayer />} />
-              <Route
-                path="/admin"
-                element={
-                  <AdminRoute>
-                    <AdminPage />
-                  </AdminRoute>
-                }
-              />
-            </Routes>
-          </Container>
+          <div className="d-flex flex-column min-vh-100">
+            <Header />
+            <Container className="my-4 flex-grow-1">
+              <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/register" element={<RegisterPage />} />
+                <Route
+                  path="/upload"
+                  element={
+                    <ProtectedRoute>
+                      <UploadPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/edit/:mediaId"
+                  element={
+                    <ProtectedRoute>
+                      <UploadPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/playlists"
+                  element={
+                    <ProtectedRoute>
+                      <PlaylistsPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/playlists/:playlistId"
+                  element={
+                    <ProtectedRoute>
+                      <MyPlaylistPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/profile"
+                  element={
+                    <ProtectedRoute>
+                      <ProfilePage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route path="/media/:mediaId" element={<MediaPlayerPage />} />
+                <Route
+                  path="/admin"
+                  element={
+                    <AdminRoute>
+                      <AdminPage />
+                    </AdminRoute>
+                  }
+                />
+                <Route path="/403" element={<RestrictedPage />} />
+                <Route path="*" element={<NotFoundPage />} />
+              </Routes>
+            </Container>
+            <Footer />
+          </div>
         </Router>
       )}
     </AuthInitializer>
