@@ -5,6 +5,8 @@ import { useSelector } from "react-redux";
 import AuthInitializer from "./components/AuthInitializer";
 
 import ProtectedRoute from "./HOC/ProtectedRoute";
+import AdminRoute from "./HOC/AdminRoute";
+
 import Header from "./components/Header";
 import UploadForm from "./components/UploadForm";
 import MediaPlayer from "./components/MediaPlayer";
@@ -16,6 +18,7 @@ import PlaylistsPage from "./pages/PlaylistsPage";
 import MyPlaylistPage from "./pages/MyPlaylistPage";
 import ProfilePage from "./pages/ProfilePage";
 import CategoriesPage from "./pages/CategoriesPage";
+import AdminPage from "./pages/admin/AdminPage";
 
 function App() {
   const { isLoading } = useSelector((state) => state.auth);
@@ -77,6 +80,14 @@ function App() {
               />
               <Route path="/media" element={<MediaListPage />} />
               <Route path="/media/:mediaId" element={<MediaPlayer />} />
+              <Route
+                path="/admin"
+                element={
+                  <AdminRoute>
+                    <AdminPage />
+                  </AdminRoute>
+                }
+              />
             </Routes>
           </Container>
         </Router>

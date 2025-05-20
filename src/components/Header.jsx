@@ -9,7 +9,7 @@ const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [showResults, setShowResults] = useState(false);
-  const { isAuthenticated, username } = useSelector((state) => state.auth);
+  const { isAuthenticated, username, role } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -55,7 +55,6 @@ const Header = () => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
 
         <Navbar.Collapse id="basic-navbar-nav">
-          {/* Поиск (только для авторизованных) */}
           {isAuthenticated && (
             <Form className="d-flex mx-3" style={{ width: "300px" }}>
               <Form.Group controlId="search">
@@ -105,7 +104,7 @@ const Header = () => {
 
           <Nav className="ms-auto">
             <Nav.Link as={Link} to="/categories" className="d-flex align-items-center">
-              {/* <i className="bi bi-person-circle me-1"></i> */}
+              <i className="bi bi-fire me-1"></i>
               Топ хитов!
             </Nav.Link>
             {isAuthenticated ? (
@@ -115,6 +114,15 @@ const Header = () => {
                   <i className="bi bi-person-circle me-1"></i>
                   {username}
                 </Nav.Link>
+
+                {role === "ADMIN" ? (
+                  <Nav.Link as={Link} to="/admin">
+                    <i className="bi bi-person-fill-gear me-1"></i>
+                    Админ-панель
+                  </Nav.Link>
+                ) : (
+                  <></>
+                )}
 
                 <Nav.Link as={Link} to="/playlists">
                   <i className="bi bi-collection me-1"></i>

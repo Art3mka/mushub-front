@@ -6,7 +6,8 @@ import { useSelector } from "react-redux";
 const CommentsSection = ({ mediaId }) => {
   const [comments, setComments] = useState([]);
   const [text, setText] = useState("");
-  const { isAuthenticated, username, token } = useSelector((state) => state.auth);
+  const { isAuthenticated, username, token, role } = useSelector((state) => state.auth);
+  const state = useSelector((state) => state.auth);
 
   useEffect(() => {
     const fetchComments = async () => {
@@ -18,6 +19,7 @@ const CommentsSection = ({ mediaId }) => {
       }
     };
     fetchComments();
+    console.log(state);
   }, [mediaId]);
 
   const handleSubmit = async (e) => {

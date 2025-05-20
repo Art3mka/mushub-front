@@ -15,12 +15,12 @@ const LoginPage = () => {
     e.preventDefault();
     try {
       const res = await axios.post("http://localhost:8000/api/auth/login", formData);
-      console.log(res.data);
       dispatch(
         setCredentials({
           userId: res.data.userId,
           username: res.data.username,
           token: res.data.token,
+          role: res.data.role,
         })
       );
       localStorage.setItem("token", res.data.token);

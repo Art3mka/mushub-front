@@ -6,6 +6,7 @@ const authSlice = createSlice({
     userId: null,
     username: null,
     token: null,
+    role: null,
     isAuthenticated: false,
     isLoading: true,
   },
@@ -14,6 +15,7 @@ const authSlice = createSlice({
       state.userId = action.payload.userId;
       state.username = action.payload.username;
       state.token = action.payload.token;
+      state.role = action.payload.role;
       state.isAuthenticated = true;
       state.isLoading = false;
     },
@@ -21,6 +23,7 @@ const authSlice = createSlice({
       state.userId = null;
       state.username = null;
       state.token = null;
+      state.role = null;
       state.isAuthenticated = false;
       state.isLoading = false;
     },

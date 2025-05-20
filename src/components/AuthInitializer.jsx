@@ -26,6 +26,7 @@ const AuthInitializer = ({ children }) => {
           setCredentials({
             userId: user._id,
             username: user.name,
+            role: user.role,
             token,
           })
         );
