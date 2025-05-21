@@ -13,7 +13,7 @@ const RegisterPage = () => {
     e.preventDefault();
     try {
       console.log(formData);
-      const res = await register(formData);
+      await register(formData);
       navigate("/login");
     } catch (err) {
       setError(err.response?.data?.error || "Ошибка регистрации");

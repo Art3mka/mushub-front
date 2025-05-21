@@ -8,12 +8,17 @@ const AdminCategories = () => {
   const [showModal, setShowModal] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
   const [title, setTitle] = useState("");
+  const [error, setError] = useState("");
 
   const { token } = useSelector((state) => state.auth);
 
   const fetchCategories = async () => {
-    const res = await getAllCategories();
-    setCategories(res.categories);
+    try {
+      const res = await getAllCategories();
+      setCategories(res.categories);
+    } catch (err) {
+      setError(err.response?.data?.error || "Ошибка загрузки");
+    }
   };
 
   useEffect(() => {
@@ -22,19 +27,30 @@ const AdminCategories = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (editingCategory) {
-      await updateCategory(editingCategory._id, { title }, token);
-    } else {
-      await createCategory({ title }, token);
+    try {
+      if (editingCategory) {
+        await updateCategory(editingCategory._id, { title }, token);
+      } else {
+        await createCategory({ title }, token);
+      }
+    } catch (err) {
+      setError(err.response?.data?.error || "Ошибка загрузки");
     }
+
     setShowModal(false);
     fetchCategories();
   };
 
   const handleDeleteCategory = async (id) => {
-    await deleteCategory(id, token);
-    fetchCategories();
+    try {
+      await deleteCategory(id, token);
+      await fetchCategories();
+    } catch (err) {
+      setError(err.response?.data?.error || "Ошибка загрузки");
+    }
   };
+
+  if (error) return <div className="alert alert-danger">{error}</div>;
 
   return (
     <div>

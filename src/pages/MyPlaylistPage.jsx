@@ -71,8 +71,6 @@ const MyPlaylistPage = () => {
       </div>
     );
 
-  const isOwner = playlist?.authorId._id === userId;
-
   return (
     <>
       <div className="d-flex justify-content-between align-items-center mb-4">
@@ -84,7 +82,7 @@ const MyPlaylistPage = () => {
           </small>
         </div>
 
-        {isOwner && (
+        {playlist?.authorId._id === userId && (
           <Dropdown>
             <Dropdown.Toggle variant="outline-secondary">Управление</Dropdown.Toggle>
             <Dropdown.Menu>
@@ -107,7 +105,7 @@ const MyPlaylistPage = () => {
                   <Button variant="outline-primary" size="sm" onClick={() => navigate(`/media/${media._id}`)}>
                     Воспроизвести
                   </Button>
-                  {isOwner && (
+                  {playlist?.authorId._id === userId && (
                     <Button variant="outline-danger" size="sm" onClick={() => handleRemoveTrack(media._id)}>
                       Удалить
                     </Button>

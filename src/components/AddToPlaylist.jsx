@@ -9,16 +9,17 @@ const AddToPlaylist = ({ className, mediaId }) => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const { isAuthenticated, token } = useSelector((state) => state.auth);
 
+  const fetchPlaylists = async () => {
+    try {
+      const res = await getUserPlaylists(token);
+      setPlaylists(res);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
     if (isAuthenticated) {
-      const fetchPlaylists = async () => {
-        try {
-          const res = await getUserPlaylists(token);
-          setPlaylists(res);
-        } catch (err) {
-          console.error(err);
-        }
-      };
       fetchPlaylists();
     }
   }, []);
@@ -50,7 +51,11 @@ const AddToPlaylist = ({ className, mediaId }) => {
           <Dropdown.Item onClick={() => setShowCreateModal(true)}>+ Создать новый</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
-      <CreatePlaylistModal show={showCreateModal} onHide={() => setShowCreateModal(false)} />
+      <CreatePlaylistModal
+        show={showCreateModal}
+        onHide={() => setShowCreateModal(false)}
+        onSubmit={() => fetchPlaylists()}
+      />
     </div>
   );
 };

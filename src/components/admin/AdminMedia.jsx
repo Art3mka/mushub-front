@@ -11,17 +11,26 @@ const AdminMedia = () => {
   const [title, setTitle] = useState("");
   const [categoryId, setCategoryId] = useState(null);
   const [categoryTitle, setCategoryTitle] = useState("");
+  const [error, setError] = useState("");
 
   const { token } = useSelector((state) => state.auth);
 
   const fetchMedias = async () => {
-    const res = await getAllMedia();
-    setMedias(res);
+    try {
+      const res = await getAllMedia();
+      setMedias(res);
+    } catch (err) {
+      setError(err.response?.data?.error || "Ошибка загрузки");
+    }
   };
 
   const fetchCategories = async () => {
-    const res = await getAllCategories();
-    setCategories(res.categories);
+    try {
+      const res = await getAllCategories();
+      setCategories(res.categories);
+    } catch (err) {
+      setError(err.response?.data?.error || "Ошибка загрузки");
+    }
   };
 
   useEffect(() => {
@@ -31,17 +40,27 @@ const AdminMedia = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (editingMedia) {
-      await updateMedia(editingMedia._id, { title, categoryId }, token);
+    try {
+      if (editingMedia) {
+        await updateMedia(editingMedia._id, { title, categoryId }, token);
+      }
+      setShowModal(false);
+      fetchMedias();
+    } catch (err) {
+      setError(err.response?.data?.error || "Ошибка загрузки");
     }
-    setShowModal(false);
-    fetchMedias();
   };
 
   const handleDeleteMedia = async (id) => {
-    await deleteMedia(id, token);
-    fetchMedias();
+    try {
+      await deleteMedia(id, token);
+      fetchMedias();
+    } catch (err) {
+      setError(err.response?.data?.error || "Ошибка загрузки");
+    }
   };
+
+  if (error) return <div className="alert alert-danger">{error}</div>;
 
   return (
     <div>
@@ -95,7 +114,7 @@ const AdminMedia = () => {
                 <Dropdown.Toggle variant="success">
                   {categoryTitle ? categoryTitle : "Выбери категорию"}
                 </Dropdown.Toggle>
-                <Dropdown.Menu>
+                <Dropdown.Menu style={{ maxHeight: "200px", overflowY: "auto" }}>
                   {categories.map((category) => (
                     <Dropdown.Item
                       key={category._id}

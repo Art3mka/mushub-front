@@ -3,7 +3,7 @@ import { Modal, Button, Form } from "react-bootstrap";
 import { postPlaylist } from "../api/requests";
 import { useSelector } from "react-redux";
 
-const CreatePlaylistModal = ({ show, onHide }) => {
+const CreatePlaylistModal = ({ show, onHide, onSubmit }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [isPublic, setIsPublic] = useState(true);
@@ -13,7 +13,7 @@ const CreatePlaylistModal = ({ show, onHide }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await postPlaylist(
+      await postPlaylist(
         {
           name,
           description,
@@ -22,6 +22,7 @@ const CreatePlaylistModal = ({ show, onHide }) => {
         token
       );
       onHide();
+      onSubmit();
       setName("");
       setDescription("");
     } catch (err) {

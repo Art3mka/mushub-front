@@ -11,15 +11,16 @@ const PlaylistsPage = () => {
 
   const { token } = useSelector((state) => state.auth);
 
+  const fetchPlaylists = async () => {
+    try {
+      const res = await getUserPlaylists(token);
+      setPlaylists(res);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
-    const fetchPlaylists = async () => {
-      try {
-        const res = await getUserPlaylists(token);
-        setPlaylists(res);
-      } catch (err) {
-        console.error(err);
-      }
-    };
     fetchPlaylists();
   }, []);
 
@@ -54,7 +55,11 @@ const PlaylistsPage = () => {
           <Button onClick={() => setShowCreateModal(true)}>Создайте свой первый плейлист!</Button>
         )}
       </Row>
-      <CreatePlaylistModal show={showCreateModal} onHide={() => setShowCreateModal(false)} />
+      <CreatePlaylistModal
+        show={showCreateModal}
+        onHide={() => setShowCreateModal(false)}
+        onSubmit={() => fetchPlaylists()}
+      />
     </>
   );
 };

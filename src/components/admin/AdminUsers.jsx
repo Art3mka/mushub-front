@@ -9,12 +9,17 @@ const AdminUsers = () => {
   const [editingUser, setEditingUser] = useState(null);
   const [name, setName] = useState("");
   const [role, setRole] = useState("");
+  const [error, setError] = useState("");
 
   const { token } = useSelector((state) => state.auth);
 
   const fetchUsers = async () => {
-    const res = await getAllUsers(token);
-    setUsers(res.users);
+    try {
+      const res = await getAllUsers(token);
+      setUsers(res.users);
+    } catch (err) {
+      setError(err.response?.data?.error || "Ошибка загрузки");
+    }
   };
 
   useEffect(() => {
@@ -23,17 +28,27 @@ const AdminUsers = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (editingUser) {
-      await updateUser(editingUser._id, { name, role }, token);
+    try {
+      if (editingUser) {
+        await updateUser(editingUser._id, { name, role }, token);
+      }
+      setShowModal(false);
+      fetchUsers();
+    } catch (err) {
+      setError(err.response?.data?.error || "Ошибка загрузки");
     }
-    setShowModal(false);
-    fetchUsers();
   };
 
   const handleDeleteUser = async (id) => {
-    await deleteUser(id, token);
-    fetchUsers();
+    try {
+      await deleteUser(id, token);
+      fetchUsers();
+    } catch (err) {
+      setError(err.response?.data?.error || "Ошибка загрузки");
+    }
   };
+
+  if (error) return <div className="alert alert-danger">{error}</div>;
 
   return (
     <div>
