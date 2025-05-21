@@ -48,7 +48,7 @@ const MediaPlayerPage = () => {
 
       <div className="player-wrapper">
         <audio controls crossOrigin="anonymous" className="w-100">
-          <source src={`http://localhost:8000/media/${media.filename}`} type={media.mimetype} />
+          <source src={`https://mushub-back-production.up.railway.app/media/${media.filename}`} type={media.mimetype} />
         </audio>
       </div>
       <div className="mt-4">
