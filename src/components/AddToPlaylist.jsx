@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { Dropdown, Modal, ListGroup } from "react-bootstrap";
-import axios from "axios";
 import { useSelector } from "react-redux";
 import CreatePlaylistModal from "./CreatePlaylistModal";
+import { getUserPlaylists, addToPlaylist } from "../api/requests";
 
 const AddToPlaylist = ({ className, mediaId }) => {
   const [playlists, setPlaylists] = useState([]);
@@ -13,11 +13,8 @@ const AddToPlaylist = ({ className, mediaId }) => {
     if (isAuthenticated) {
       const fetchPlaylists = async () => {
         try {
-          const res = await axios.get("http://localhost:8000/api/playlists/my", {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-
-          setPlaylists(res.data);
+          const res = await getUserPlaylists(token);
+          setPlaylists(res);
         } catch (err) {
           console.error(err);
         }
@@ -29,13 +26,7 @@ const AddToPlaylist = ({ className, mediaId }) => {
   const handleAddToPlaylist = async (playlistId) => {
     if (isAuthenticated) {
       try {
-        await axios.post(
-          `http://localhost:8000/api/playlists/${playlistId}/add/${mediaId}`,
-          {},
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        await addToPlaylist(playlistId, mediaId, token);
         alert("Добавлено в плейлист!");
       } catch (err) {
         console.error(err);

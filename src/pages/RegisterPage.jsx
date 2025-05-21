@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Form, Button, Alert, Card } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { register } from "../api/requests";
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({ name: "", email: "", password: "" });
@@ -13,7 +13,7 @@ const RegisterPage = () => {
     e.preventDefault();
     try {
       console.log(formData);
-      await axios.post("http://localhost:8000/api/auth/register", formData);
+      const res = await register(formData);
       navigate("/login");
     } catch (err) {
       setError(err.response?.data?.error || "Ошибка регистрации");

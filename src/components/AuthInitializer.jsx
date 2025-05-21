@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { setCredentials, setLoading, logout } from "../store/authSlice";
-import axios from "axios";
+import { verifyToken } from "../api/requests";
 
 const AuthInitializer = ({ children }) => {
   const dispatch = useDispatch();
@@ -15,12 +15,10 @@ const AuthInitializer = ({ children }) => {
       return;
     }
 
-    const verifyToken = async () => {
+    const checkToken = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/api/auth/verify", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const user = response.data;
+        const res = await verifyToken(token);
+        const user = res;
 
         dispatch(
           setCredentials({
@@ -41,7 +39,7 @@ const AuthInitializer = ({ children }) => {
       }
     };
 
-    verifyToken();
+    checkToken();
   }, [dispatch]);
 
   return children;

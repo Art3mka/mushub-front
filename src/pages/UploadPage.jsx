@@ -2,11 +2,13 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { Form, Button, Alert, Spinner, Dropdown } from "react-bootstrap";
-import axios from "axios";
+import { getAllCategories, getMediaById, updateMedia, postMedia } from "../api/requests";
+import { useSelector } from "react-redux";
 
 const UploadPage = () => {
   const { mediaId } = useParams();
   const navigate = useNavigate();
+  const { token } = useSelector((state) => state.auth);
   const [isEditing, setIsEditing] = useState(false);
   const [file, setFile] = useState(null);
   const [categories, setCategories] = useState([]);
@@ -14,14 +16,14 @@ const UploadPage = () => {
     title: "",
     categoryId: null,
   });
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get("http://localhost:8000/api/category");
-        setCategories(res.data.categories);
+        const res = await getAllCategories();
+        setCategories(res.categories);
       } catch (error) {
         console.error("Ошибка загрузки:", error);
       } finally {
@@ -31,12 +33,14 @@ const UploadPage = () => {
     if (mediaId) {
       const fetchTrack = async () => {
         try {
-          const res = await axios.get(`http://localhost:8000/api/media/${mediaId}`);
+          const res = await getMediaById(mediaId);
+
           setFormData({
-            title: res.data.title,
-            categoryId: res.data.categoryId._id,
+            title: res.title,
+            categoryId: res.categoryId._id,
           });
           setIsEditing(true);
+          setIsLoading(false);
         } catch (err) {
           navigate("/upload");
         }
@@ -57,23 +61,12 @@ const UploadPage = () => {
       data.append("categoryId", formData.categoryId);
 
       if (isEditing) {
-        await axios.put(`http://localhost:8000/api/media/${mediaId}`, data, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
+        await updateMedia(mediaId, data, token);
         navigate("/profile");
       } else {
         data.append("music", file);
-
-        await axios.post("http://localhost:8000/api/media/upload", data, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-
+        await postMedia(data, token);
+        navigate("/profile");
         alert("Файл успешно загружен!");
       }
     } catch (err) {

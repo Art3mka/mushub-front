@@ -1,23 +1,21 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, Button, Alert, Spinner } from "react-bootstrap";
-import axios from "axios";
+import { deleteMedia } from "../api/requests";
+import { useSelector } from "react-redux";
 
 const UserMediaList = ({ media, onDelete }) => {
   const [loadingId, setLoadingId] = useState(null);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
+  const { token } = useSelector((state) => state.auth);
+
   const handleDelete = async (trackId) => {
     try {
       setLoadingId(trackId);
       setError(null);
-
-      await axios.delete(`http://localhost:8000/api/media/${trackId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      await deleteMedia(trackId, token);
 
       onDelete(trackId); // Обновляем состояние в родительском компоненте
     } catch (err) {

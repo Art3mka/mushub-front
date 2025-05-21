@@ -1,27 +1,26 @@
 import { useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
-import axios from "axios";
+import { postPlaylist } from "../api/requests";
+import { useSelector } from "react-redux";
 
 const CreatePlaylistModal = ({ show, onHide }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [isPublic, setIsPublic] = useState(true);
 
+  const { token } = useSelector((state) => state.auth);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(
-        "http://localhost:8000/api/playlists/",
+      const res = await postPlaylist(
         {
           name,
           description,
           isPublic,
         },
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
+        token
       );
-      console.log(res);
       onHide();
       setName("");
       setDescription("");

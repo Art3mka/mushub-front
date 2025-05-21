@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Form, ListGroup, Button } from "react-bootstrap";
-import axios from "axios";
 import { useSelector } from "react-redux";
+import { getAllComments, postComment } from "../api/requests";
 
 const CommentsSection = ({ mediaId }) => {
   const [comments, setComments] = useState([]);
@@ -11,8 +11,8 @@ const CommentsSection = ({ mediaId }) => {
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const res = await axios.get(`http://localhost:8000/api/media/comment/${mediaId}`);
-        setComments(res.data);
+        const res = await getAllComments(mediaId);
+        setComments(res);
       } catch (err) {
         console.error(err);
       }
@@ -23,12 +23,8 @@ const CommentsSection = ({ mediaId }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(
-        `http://localhost:8000/api/media/comment/${mediaId}`,
-        { text },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setComments([res.data, ...comments]);
+      const res = await postComment(mediaId, { text }, token);
+      setComments([res, ...comments]);
       setText("");
     } catch (err) {
       console.error(err);

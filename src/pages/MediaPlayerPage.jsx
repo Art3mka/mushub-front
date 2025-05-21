@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { useParams } from "react-router-dom";
 import { Spinner } from "react-bootstrap";
+import { getMediaById } from "../api/requests";
 
 import usePlayLimit from "../hooks/usePlayLimit";
 
@@ -18,8 +18,8 @@ const MediaPlayerPage = () => {
   useEffect(() => {
     const fetchMedia = async () => {
       try {
-        const res = await axios.get(`http://localhost:8000/api/media/${mediaId}`);
-        setMedia(res.data);
+        const res = await getMediaById(mediaId);
+        setMedia(res);
       } catch (err) {
         setError(err.response?.data?.error || "Ошибка загрузки");
       }

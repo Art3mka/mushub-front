@@ -1,21 +1,21 @@
 import { useEffect, useState } from "react";
-import { Card, Container, Button, Row, Col } from "react-bootstrap";
+import { Card, Button, Row, Col } from "react-bootstrap";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import { getUserPlaylists } from "../api/requests";
 import CreatePlaylistModal from "../components/CreatePlaylistModal";
 
 const PlaylistsPage = () => {
   const [playlists, setPlaylists] = useState([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
 
+  const { token } = useSelector((state) => state.auth);
+
   useEffect(() => {
     const fetchPlaylists = async () => {
       try {
-        const res = await axios.get("http://localhost:8000/api/playlists/my", {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        });
-        console.log(res.data);
-        setPlaylists(res.data);
+        const res = await getUserPlaylists(token);
+        setPlaylists(res);
       } catch (err) {
         console.error(err);
       }

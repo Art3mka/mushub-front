@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Table, Button, Form, Modal } from "react-bootstrap";
-import axios from "axios";
+import { createCategory, getAllCategories, updateCategory, deleteCategory } from "../../api/requests";
+import { useSelector } from "react-redux";
 
 const AdminCategories = () => {
   const [categories, setCategories] = useState([]);
@@ -8,9 +9,11 @@ const AdminCategories = () => {
   const [editingCategory, setEditingCategory] = useState(null);
   const [title, setTitle] = useState("");
 
+  const { token } = useSelector((state) => state.auth);
+
   const fetchCategories = async () => {
-    const res = await axios.get("http://localhost:8000/api/category");
-    setCategories(res.data.categories);
+    const res = await getAllCategories();
+    setCategories(res.categories);
   };
 
   useEffect(() => {
@@ -20,16 +23,16 @@ const AdminCategories = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (editingCategory) {
-      await axios.put(`http://localhost:8000/api/category/update/${editingCategory._id}`, { title });
+      await updateCategory(editingCategory._id, { title }, token);
     } else {
-      await axios.post("http://localhost:8000/api/category/create", { title });
+      await createCategory({ title }, token);
     }
     setShowModal(false);
     fetchCategories();
   };
 
-  const deleteCategory = async (id) => {
-    await axios.delete(`http://localhost:8000/api/category/delete/${id}`);
+  const handleDeleteCategory = async (id) => {
+    await deleteCategory(id, token);
     fetchCategories();
   };
 
@@ -67,7 +70,7 @@ const AdminCategories = () => {
                 >
                   Редактировать
                 </Button>
-                <Button variant="danger" onClick={() => deleteCategory(category._id)}>
+                <Button variant="danger" onClick={() => handleDeleteCategory(category._id)}>
                   Удалить
                 </Button>
               </td>

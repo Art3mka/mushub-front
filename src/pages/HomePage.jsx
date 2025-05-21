@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Dropdown, Button, Card, Spinner, Container, Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import { getAllCategories, getMediaByCategories } from "../api/requests";
 
 const HomePage = () => {
   const [media, setMedia] = useState([]);
@@ -16,13 +16,11 @@ const HomePage = () => {
     const fetchData = async () => {
       try {
         const [categoriesRes, mediaRes] = await Promise.all([
-          axios.get("http://localhost:8000/api/category"),
-          axios.get(
-            `http://localhost:8000/api/media/categories?sort=${filters.sort}&category=${filters.categoryId || ""}`
-          ),
+          getAllCategories(),
+          getMediaByCategories(filters.sort, filters.categoryId),
         ]);
-        setCategories(categoriesRes.data.categories);
-        setMedia(mediaRes.data);
+        setCategories(categoriesRes.categories);
+        setMedia(mediaRes);
       } catch (error) {
         console.error("Ошибка загрузки:", error);
       } finally {

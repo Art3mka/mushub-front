@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
-import axios from "axios";
 import { useSelector } from "react-redux";
+import { getCheckLike, postToggleLike } from "../api/requests";
 
 const LikeButton = ({ className, mediaId, initialLikes }) => {
   const [liked, setLiked] = useState(false);
@@ -11,12 +11,8 @@ const LikeButton = ({ className, mediaId, initialLikes }) => {
   useEffect(() => {
     const checkLikeStatus = async () => {
       try {
-        const res = await axios.get(`http://localhost:8000/api/media/${mediaId}/check-like`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setLiked(res.data.liked);
+        const res = await getCheckLike(mediaId, token);
+        setLiked(res.liked);
       } catch (err) {
         console.error("Ошибка проверки лайка:", err);
       }
@@ -29,15 +25,9 @@ const LikeButton = ({ className, mediaId, initialLikes }) => {
 
   const handleLike = async () => {
     try {
-      const res = await axios.post(
-        `http://localhost:8000/api/media/like/${mediaId}`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      setLiked(res.data.liked);
-      setLikes((prev) => (res.data.liked ? prev + 1 : prev - 1));
+      const res = await postToggleLike(mediaId, token);
+      setLiked(res.liked);
+      setLikes((prev) => (res.liked ? prev + 1 : prev - 1));
     } catch (err) {
       console.error(err);
     }

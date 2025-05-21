@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Container, Row, Col, Card, Button, Dropdown, Modal, Form, Alert, Spinner } from "react-bootstrap";
-import axios from "axios";
-import ReactPlayer from "react-player";
+import { Row, Col, Card, Button, Dropdown, Modal, Form, Alert, Spinner } from "react-bootstrap";
 import { useSelector } from "react-redux";
+import { getPlaylistById, deleteFromPlaylist, updatePlaylist, deletePlaylist } from "../api/requests";
 
 const MyPlaylistPage = () => {
-  const { userId } = useSelector((state) => state.auth);
+  const { userId, token } = useSelector((state) => state.auth);
   const { playlistId } = useParams();
   const navigate = useNavigate();
   const [playlist, setPlaylist] = useState(null);
@@ -18,14 +17,12 @@ const MyPlaylistPage = () => {
   useEffect(() => {
     const fetchPlaylist = async () => {
       try {
-        const res = await axios.get(`http://localhost:8000/api/playlists/${playlistId}`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        });
-        setPlaylist(res.data);
+        const res = await getPlaylistById(playlistId, token);
+        setPlaylist(res);
         setEditData({
-          name: res.data.name,
-          description: res.data.description,
-          isPublic: res.data.isPublic,
+          name: res.name,
+          description: res.description,
+          isPublic: res.isPublic,
         });
       } catch (err) {
         setError(err.response?.data?.error || "Ошибка загрузки");
@@ -36,9 +33,7 @@ const MyPlaylistPage = () => {
 
   const handleRemoveTrack = async (mediaId) => {
     try {
-      await axios.delete(`http://localhost:8000/api/playlists/${playlistId}/remove/${mediaId}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
+      await deleteFromPlaylist(playlistId, mediaId, token);
       setPlaylist((prev) => ({
         ...prev,
         mediaItems: prev.mediaItems.filter((item) => item._id !== mediaId),
@@ -50,10 +45,9 @@ const MyPlaylistPage = () => {
 
   const handleUpdatePlaylist = async () => {
     try {
-      const res = await axios.patch(`http://localhost:8000/api/playlists/${playlistId}`, editData, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
-      setPlaylist(res.data);
+      const res = await updatePlaylist(playlistId, editData, token);
+      console.log(res);
+      setPlaylist(res);
       setShowEditModal(false);
     } catch (err) {
       console.error(err);
@@ -62,9 +56,7 @@ const MyPlaylistPage = () => {
 
   const handleDeletePlaylist = async () => {
     try {
-      await axios.delete(`http://localhost:8000/api/playlists/${playlistId}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
+      await deletePlaylist(playlistId, token);
       navigate("/playlists");
     } catch (err) {
       console.error(err);

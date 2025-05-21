@@ -2,12 +2,12 @@ import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Tab, Tabs, Spinner, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import axios from "axios";
 import MediaList from "../components/MediaList";
 import UserMediaList from "../components/UserMediaList";
+import { getUser } from "../api/requests";
 
 const ProfilePage = () => {
-  const { userId } = useSelector((state) => state.auth);
+  const { userId, token } = useSelector((state) => state.auth);
   const [profile, setProfile] = useState(null);
   const [likedMedia, setLikedMedia] = useState([]);
   const [uploadedMedia, setUploadedMedia] = useState([]);
@@ -16,10 +16,10 @@ const ProfilePage = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await axios.get(`http://localhost:8000/api/users/${userId}`);
-        setProfile(res.data.profile);
-        setLikedMedia(res.data.likedMedia);
-        setUploadedMedia(res.data.uploadedMedia);
+        const res = await getUser(userId, token);
+        setProfile(res.profile);
+        setLikedMedia(res.likedMedia);
+        setUploadedMedia(res.uploadedMedia);
       } catch (err) {
         console.error("Failed to load profile:", err);
       }

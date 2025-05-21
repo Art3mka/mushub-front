@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Table, Button, Form, Modal, Dropdown } from "react-bootstrap";
-import axios from "axios";
+import { getAllUsers, updateUser, deleteUser } from "../../api/requests";
+import { useSelector } from "react-redux";
 
 const AdminUsers = () => {
   const [users, setUsers] = useState([]);
@@ -9,9 +10,11 @@ const AdminUsers = () => {
   const [name, setName] = useState("");
   const [role, setRole] = useState("");
 
+  const { token } = useSelector((state) => state.auth);
+
   const fetchUsers = async () => {
-    const res = await axios.get("http://localhost:8000/api/users");
-    setUsers(res.data.users);
+    const res = await getAllUsers(token);
+    setUsers(res.users);
   };
 
   useEffect(() => {
@@ -21,14 +24,14 @@ const AdminUsers = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (editingUser) {
-      await axios.put(`http://localhost:8000/api/users/update/${editingUser._id}`, { name, role });
+      await updateUser(editingUser._id, { name, role }, token);
     }
     setShowModal(false);
     fetchUsers();
   };
 
-  const deleteUser = async (id) => {
-    await axios.delete(`http://localhost:8000/api/users/delete/${id}`);
+  const handleDeleteUser = async (id) => {
+    await deleteUser(id, token);
     fetchUsers();
   };
 
@@ -57,7 +60,7 @@ const AdminUsers = () => {
                 >
                   Редактировать
                 </Button>
-                <Button variant="danger" onClick={() => deleteUser(user._id)}>
+                <Button variant="danger" onClick={() => handleDeleteUser(user._id)}>
                   Удалить
                 </Button>
               </td>

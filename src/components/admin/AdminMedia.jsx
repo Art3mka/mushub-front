@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Table, Button, Form, Modal, Dropdown } from "react-bootstrap";
-import axios from "axios";
+import { getAllMedia, getAllCategories, updateMedia, deleteMedia } from "../../api/requests";
 import { useSelector } from "react-redux";
 
 const AdminMedia = () => {
@@ -15,13 +15,13 @@ const AdminMedia = () => {
   const { token } = useSelector((state) => state.auth);
 
   const fetchMedias = async () => {
-    const res = await axios.get("http://localhost:8000/api/media");
-    setMedias(res.data);
+    const res = await getAllMedia();
+    setMedias(res);
   };
 
   const fetchCategories = async () => {
-    const res = await axios.get("http://localhost:8000/api/category");
-    setCategories(res.data.categories);
+    const res = await getAllCategories();
+    setCategories(res.categories);
   };
 
   useEffect(() => {
@@ -32,18 +32,14 @@ const AdminMedia = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (editingMedia) {
-      await axios.put(
-        `http://localhost:8000/api/media/${editingMedia._id}`,
-        { title, categoryId },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await updateMedia(editingMedia._id, { title, categoryId }, token);
     }
     setShowModal(false);
     fetchMedias();
   };
 
-  const deleteMedia = async (id) => {
-    await axios.delete(`http://localhost:8000/api/media/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+  const handleDeleteMedia = async (id) => {
+    await deleteMedia(id, token);
     fetchMedias();
   };
 
@@ -73,7 +69,7 @@ const AdminMedia = () => {
                 >
                   Редактировать
                 </Button>
-                <Button variant="danger" onClick={() => deleteMedia(media._id)}>
+                <Button variant="danger" onClick={() => handleDeleteMedia(media._id)}>
                   Удалить
                 </Button>
               </td>

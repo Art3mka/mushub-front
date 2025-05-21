@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Form, Button, Alert, Card } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "../store/authSlice";
+import { login } from "../api/requests";
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -14,16 +14,16 @@ const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:8000/api/auth/login", formData);
+      const res = await login(formData);
       dispatch(
         setCredentials({
-          userId: res.data.userId,
-          username: res.data.username,
-          token: res.data.token,
-          role: res.data.role,
+          userId: res.userId,
+          username: res.username,
+          token: res.token,
+          role: res.role,
         })
       );
-      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("token", res.token);
       navigate("/");
     } catch (err) {
       setError(err.response?.data?.error || "Ошибка входа");
