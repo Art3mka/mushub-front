@@ -1,5 +1,6 @@
 import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -9,13 +10,17 @@ const Footer = () => {
           <Col md={4} className="text-center">
             <h5>Мои соцсети</h5>
             <div className="d-flex justify-content-center ">
-              <a href="https://t.me/rtq_shein" className="text-dark mx-2">
+              <a href="https://t.me/rtq_shein" target="blank" className="text-dark mx-2">
                 <i className="bi bi-telegram"></i>
               </a>
-              <a href="https://github.com/Art3mka" className="text-dark mx-2">
+              <a href="https://github.com/Art3mka" target="blank" className="text-dark mx-2">
                 <i className="bi bi-github"></i>
               </a>
-              <a href="https://www.instagram.com/artmshpn?igsh=czNzMzZla2FxbjU3" className="text-dark mx-2">
+              <a
+                href="https://www.instagram.com/artmshpn?igsh=czNzMzZla2FxbjU3"
+                target="blank"
+                className="text-dark mx-2"
+              >
                 <i className="bi bi-instagram"></i>
               </a>
             </div>
@@ -24,7 +29,7 @@ const Footer = () => {
 
         <Row>
           <Col className="text-center text-dark small">
-            &copy; {new Date().getFullYear()} Создано в 2025 в ходе стажировки. Все права не защищены.
+            &copy; {new Date().getFullYear()}. Создано в ходе стажировки. Все права не защищены.
           </Col>
         </Row>
       </Container>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Card, Button, Alert, Spinner } from "react-bootstrap";
 import { deleteMedia } from "../api/requests";
 import { useSelector } from "react-redux";
@@ -43,7 +43,12 @@ const UserMediaList = ({ media, onDelete }) => {
           <div key={track._id} className="col">
             <Card className="h-100">
               <Card.Body>
-                <Card.Title>{track.title}</Card.Title>
+                {/* <Link to={`/media/${track._id}`}> */}
+                <Card.Title className="fs-3 text-decoration-none" as={Link} to={`/media/${track._id}`}>
+                  {" "}
+                  {track.title}
+                </Card.Title>
+                {/* </Link> */}
               </Card.Body>
               <Card.Footer className="d-flex justify-content-between">
                 <Button

@@ -23,21 +23,8 @@ const Header = () => {
     }
   };
 
-  // Поиск с задержкой (debounce)
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (searchQuery.trim().length > 1) {
-        performSearch();
-      } else {
-        setSearchResults([]);
-      }
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
-
   const handleClose = () => {
-    setSearchQuery("");
+    setShowResults(false);
   };
 
   const handleLogout = () => {
@@ -61,13 +48,16 @@ const Header = () => {
                 <InputGroup>
                   <Form.Control
                     type="text"
-                    placeholder="Найти трек или альбом"
+                    placeholder="Найти трек"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    onFocus={() => searchQuery && setShowResults(true)}
                     className="me-2"
                     aria-label="Search"
                   />
+                  <Button onClick={performSearch}>
+                    {" "}
+                    <i className="bi bi-search"></i>
+                  </Button>
                 </InputGroup>
               </Form.Group>
             </Form>
@@ -84,7 +74,6 @@ const Header = () => {
                     key={media._id}
                     action
                     onClick={() => {
-                      // Переход к треку
                       setSearchQuery("");
                       navigate(`/media/${media._id}`);
                       setShowResults(false);
@@ -105,7 +94,6 @@ const Header = () => {
           <Nav className="ms-auto">
             {isAuthenticated ? (
               <>
-                {/* Меню для авторизованных */}
                 <Nav.Link as={Link} to="/profile" className="d-flex align-items-center">
                   <i className="bi bi-person-circle me-1"></i>
                   {username}
@@ -113,16 +101,14 @@ const Header = () => {
 
                 {role === "ADMIN" ? (
                   <Nav.Link as={Link} to="/admin">
-                    <i className="bi bi-person-fill-gear me-1"></i>
-                    Админ-панель
+                    <i className="bi bi-person-fill-gear me-1"></i> Админ-панель
                   </Nav.Link>
                 ) : (
                   <></>
                 )}
 
                 <Nav.Link as={Link} to="/playlists">
-                  <i className="bi bi-collection me-1"></i>
-                  Плейлисты
+                  <i className="bi bi-collection me-1"></i> Плейлисты
                 </Nav.Link>
                 <Button variant="outline-danger" size="sm" className="ms-2" onClick={handleLogout}>
                   Выйти
@@ -130,14 +116,11 @@ const Header = () => {
               </>
             ) : (
               <>
-                {/* Меню для гостей */}
                 <Nav.Link as={Link} to="/login">
-                  <i className="bi bi-box-arrow-in-right me-1"></i>
-                  Вход
+                  <i className="bi bi-box-arrow-in-right me-1"></i> Вход
                 </Nav.Link>
                 <Nav.Link as={Link} to="/register">
-                  <i className="bi bi-person-plus me-1"></i>
-                  Регистрация
+                  <i className="bi bi-person-plus me-1"></i> Регистрация
                 </Nav.Link>
               </>
             )}
