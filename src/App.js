@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Container, Spinner } from "react-bootstrap";
 import { useSelector } from "react-redux";
+import { ErrorBoundary } from "react-error-boundary";
 
 import AuthInitializer from "./components/AuthInitializer";
 
@@ -20,84 +21,87 @@ import ProfilePage from "./pages/ProfilePage";
 import HomePage from "./pages/HomePage";
 import AdminPage from "./pages/admin/AdminPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import ErrorPage from "./pages/ErrorPage";
 import RestrictedPage from "./pages/RestrictedPage";
 
 function App() {
   const { isLoading } = useSelector((state) => state.auth);
 
   return (
-    <AuthInitializer>
-      {isLoading ? (
-        <div className="d-flex justify-content-center align-items-center vh-100">
-          <Spinner animation="border" variant="warning" />
-        </div>
-      ) : (
-        <Router>
-          <div className="d-flex flex-column min-vh-100">
-            <Header />
-            <Container className="my-4 flex-grow-1">
-              <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/register" element={<RegisterPage />} />
-                <Route
-                  path="/upload"
-                  element={
-                    <ProtectedRoute>
-                      <UploadPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/edit/:mediaId"
-                  element={
-                    <ProtectedRoute>
-                      <UploadPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/playlists"
-                  element={
-                    <ProtectedRoute>
-                      <PlaylistsPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/playlists/:playlistId"
-                  element={
-                    <ProtectedRoute>
-                      <MyPlaylistPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/profile"
-                  element={
-                    <ProtectedRoute>
-                      <ProfilePage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route path="/media/:mediaId" element={<MediaPlayerPage />} />
-                <Route
-                  path="/admin"
-                  element={
-                    <AdminRoute>
-                      <AdminPage />
-                    </AdminRoute>
-                  }
-                />
-                <Route path="/403" element={<RestrictedPage />} />
-                <Route path="*" element={<NotFoundPage />} />
-              </Routes>
-            </Container>
-            <Footer />
+    <ErrorBoundary FallbackComponent={ErrorPage} onReset={() => window.location.assign("/")}>
+      <AuthInitializer>
+        {isLoading ? (
+          <div className="d-flex justify-content-center align-items-center vh-100">
+            <Spinner animation="border" variant="warning" />
           </div>
-        </Router>
-      )}
-    </AuthInitializer>
+        ) : (
+          <Router>
+            <div className="d-flex flex-column min-vh-100">
+              <Header />
+              <Container className="my-4 flex-grow-1">
+                <Routes>
+                  <Route path="/" element={<HomePage />} />
+                  <Route path="/login" element={<LoginPage />} />
+                  <Route path="/register" element={<RegisterPage />} />
+                  <Route
+                    path="/upload"
+                    element={
+                      <ProtectedRoute>
+                        <UploadPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/edit/:mediaId"
+                    element={
+                      <ProtectedRoute>
+                        <UploadPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/playlists"
+                    element={
+                      <ProtectedRoute>
+                        <PlaylistsPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/playlists/:playlistId"
+                    element={
+                      <ProtectedRoute>
+                        <MyPlaylistPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/profile"
+                    element={
+                      <ProtectedRoute>
+                        <ProfilePage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route path="/media/:mediaId" element={<MediaPlayerPage />} />
+                  <Route
+                    path="/admin"
+                    element={
+                      <AdminRoute>
+                        <AdminPage />
+                      </AdminRoute>
+                    }
+                  />
+                  <Route path="/403" element={<RestrictedPage />} />
+                  <Route path="*" element={<NotFoundPage />} />
+                </Routes>
+              </Container>
+              <Footer />
+            </div>
+          </Router>
+        )}
+      </AuthInitializer>
+    </ErrorBoundary>
   );
 }
 

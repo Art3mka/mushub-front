@@ -28,7 +28,6 @@ const MediaPlayerPage = () => {
       }
     };
     fetchMedia();
-    // checkPlayLimit();
   }, [mediaId]);
 
   const handlePlay = async () => {
@@ -58,7 +57,7 @@ const MediaPlayerPage = () => {
         {media.title} - {media.authorId?.name || media.authorName}
       </h2>
       <p>
-        Категория: <strong>{media.categoryId.title}</strong>
+        Категория: <strong>{media.categoryId?.title || "Без категории"}</strong>
       </p>
       <p>Прослушиваний: {listens}</p>
 

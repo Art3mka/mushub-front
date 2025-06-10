@@ -27,10 +27,10 @@ const Header = () => {
     setShowResults(false);
   };
 
-  const handleLogout = () => {
-    dispatch(logout());
+  const handleLogout = async () => {
+    await dispatch(logout());
     localStorage.removeItem("token");
-    navigate("/login");
+    navigate("/");
   };
   return (
     <Navbar bg="warning" variant="light" expand="lg">

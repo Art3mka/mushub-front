@@ -42,16 +42,22 @@ const AdminCategories = () => {
     try {
       setIsPending(true);
       if (editingCategory) {
-        await updateCategory(editingCategory._id, { title }, token);
+        const res = await updateCategory(editingCategory._id, { title }, token);
+        console.log(categories);
+        setCategories((prev) =>
+          prev.map((category) =>
+            category._id.toString() === res.updatedCategory._id.toString() ? res.updatedCategory : category
+          )
+        );
       } else {
-        await createCategory({ title }, token);
+        const res = await createCategory({ title }, token);
+        setCategories([...categories, res.newCategory]);
       }
     } catch (err) {
       setError(err.response?.data?.error || "Ошибка загрузки");
     } finally {
       setIsPending(false);
       setShowModal(false);
-      fetchCategories();
     }
   };
 
@@ -59,7 +65,7 @@ const AdminCategories = () => {
     try {
       setIsPending(true);
       await deleteCategory(id, token);
-      await fetchCategories();
+      setCategories((prev) => prev.filter((category) => category._id !== id));
     } catch (err) {
       setError(err.response?.data?.error || "Ошибка загрузки");
     } finally {

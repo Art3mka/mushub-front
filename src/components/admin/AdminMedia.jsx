@@ -21,6 +21,7 @@ const AdminMedia = () => {
   const fetchMedias = async () => {
     try {
       const res = await getAllMedia();
+      console.log(res);
       setMedias(res);
     } catch (err) {
       setError(err.response?.data?.error || "Ошибка загрузки");
@@ -55,14 +56,18 @@ const AdminMedia = () => {
     try {
       setIsPending(true);
       if (editingMedia) {
-        await updateMedia(editingMedia._id, { title, categoryId }, token);
+        const res = await updateMedia(editingMedia._id, { title, categoryId }, token);
+        console.log(res);
+        setMedias((prev) =>
+          prev.map((media) => (media._id.toString() === res.updatedMedia._id.toString() ? res.updatedMedia : media))
+        );
       }
     } catch (err) {
       setError(err.response?.data?.error || "Ошибка загрузки");
     } finally {
       setIsPending(false);
       setShowModal(false);
-      fetchMedias();
+      // fetchMedias();
     }
   };
 
@@ -70,13 +75,14 @@ const AdminMedia = () => {
     try {
       setIsPending(true);
       await deleteMedia(id, token);
-      fetchMedias();
+      setMedias((prev) => prev.filter((media) => media._id !== id));
+      // fetchMedias();
     } catch (err) {
       setError(err.response?.data?.error || "Ошибка загрузки");
     } finally {
       setIsPending(false);
       setIsShow(false);
-      fetchMedias();
+      // fetchMedias();
     }
   };
 
@@ -101,8 +107,8 @@ const AdminMedia = () => {
                   onClick={() => {
                     setEditingMedia(media);
                     setTitle(media.title);
-                    setCategoryId(media.categoryId._id);
-                    setCategoryTitle(media.categoryId.title);
+                    setCategoryId(media.categoryId?._id);
+                    setCategoryTitle(media.categoryId?.title);
                     setShowModal(true);
                   }}
                 >

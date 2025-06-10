@@ -43,14 +43,16 @@ const AdminUsers = () => {
     try {
       setIsPending(true);
       if (editingUser) {
-        await updateUser(editingUser._id, { name, role }, token);
+        const res = await updateUser(editingUser._id, { name, role }, token);
+        setUsers((prev) =>
+          prev.map((user) => (user._id.toString() === res.updatedUser._id.toString() ? res.updatedUser : user))
+        );
       }
     } catch (err) {
       setError(err.response?.data?.error || "Ошибка загрузки");
     } finally {
       setIsPending(false);
       setShowModal(false);
-      fetchUsers();
     }
   };
 
@@ -58,12 +60,12 @@ const AdminUsers = () => {
     try {
       setIsPending(true);
       await deleteUser(id, token);
+      setUsers((prev) => prev.filter((user) => user._id !== id));
     } catch (err) {
       setError(err.response?.data?.error || "Ошибка загрузки");
     } finally {
       setIsPending(false);
       setIsShow(false);
-      fetchUsers();
     }
   };
 
