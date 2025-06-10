@@ -1,7 +1,7 @@
 import axios from "axios";
 
-// const url = "https://mushub-back-production.up.railway.app";
-const url = "http://localhost:8000";
+const url = "https://mushub-back-production.up.railway.app";
+// const url = "http://localhost:8000";
 
 export const verifyToken = async (token) => {
   const { data } = await axios.get(`${url}/api/auth/verify`, {
