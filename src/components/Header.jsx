@@ -82,7 +82,7 @@ const Header = () => {
                     <div className="d-flex justify-content-between">
                       <div>
                         <strong>{media.title}</strong>
-                        <div className="text-muted small">{media.authorId.name}</div>
+                        <div className="text-muted small">{media.authorId?.name || media.authorName}</div>
                       </div>
                     </div>
                   </ListGroup.Item>

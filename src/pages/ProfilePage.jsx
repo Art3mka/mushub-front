@@ -1,17 +1,24 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { Tab, Tabs, Spinner, Button } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Tab, Tabs, Spinner, Button, Modal } from "react-bootstrap";
+import { Link, useLocation } from "react-router-dom";
 import MediaList from "../components/MediaList";
 import UserMediaList from "../components/UserMediaList";
 import { getUser } from "../api/requests";
 
 const ProfilePage = () => {
   const { userId, token } = useSelector((state) => state.auth);
+
+  const location = useLocation();
+
+  // let { message } = location.state || {};
+
   const [profile, setProfile] = useState(null);
   const [likedMedia, setLikedMedia] = useState([]);
   const [uploadedMedia, setUploadedMedia] = useState([]);
   const [activeTab, setActiveTab] = useState("likes");
+  const [isShow, setIsShow] = useState(false);
+  const [modalData, setModalData] = useState(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -26,10 +33,21 @@ const ProfilePage = () => {
     };
 
     fetchProfile();
-  }, [userId]);
+    if (location.state?.modalData) {
+      setModalData(location.state.modalData);
+      setIsShow(true);
+      window.history.replaceState({}, document.title);
+    }
+  }, [userId, location.state]);
 
   const handleDeleteTrack = (deletedId) => {
     setUploadedMedia((prev) => prev.filter((media) => media._id !== deletedId));
+    setModalData({ message: "Успешно удалено", variant: "success" });
+    setIsShow(true);
+  };
+
+  const handleClose = () => {
+    setIsShow(false);
   };
 
   if (!profile) {
@@ -60,6 +78,16 @@ const ProfilePage = () => {
           <MediaList media={likedMedia} />
         </Tab>
       </Tabs>
+
+      <Modal show={isShow} onHide={handleClose} style={{ marginTop: "40px" }}>
+        <Modal.Header closeButton></Modal.Header>
+        <Modal.Body>{modalData?.message}</Modal.Body>
+        <Modal.Footer className="justify-content-center">
+          <Button variant={modalData?.variant} onClick={handleClose}>
+            Закрыть
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 };

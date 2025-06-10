@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Dropdown, Button, Card, Spinner, Container, Row, Col } from "react-bootstrap";
+import { Dropdown, Button, Card, Spinner, Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { getAllCategories, getMediaByCategories } from "../api/requests";
 
@@ -68,7 +68,9 @@ const HomePage = () => {
       </div>
 
       {isLoading ? (
-        <Spinner animation="border" />
+        <div className="d-flex justify-content-center">
+          <Spinner variant="warning" animation="border" />
+        </div>
       ) : (
         <Row xs={1} sm={2} md={3} lg={4} className="g-4">
           {media.map((item) => (
@@ -77,7 +79,7 @@ const HomePage = () => {
                 <Card.Body>
                   <Card.Title>
                     <Link className="text-dark text-decoration-none" to={`/media/${item._id}`}>
-                      {item.title} - {item.authorId.name}
+                      {item.title} - {item.authorId?.name || item.authorName}
                     </Link>
                   </Card.Title>
                   <Card.Text>

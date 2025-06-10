@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Form, Button, Alert, Card } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { register } from "../api/requests";
 
 const RegisterPage = () => {
@@ -8,11 +8,13 @@ const RegisterPage = () => {
   const [error, setError] = useState("");
 
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const { message } = location.state || {};
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log(formData);
       await register(formData);
       navigate("/login");
     } catch (err) {
@@ -25,7 +27,7 @@ const RegisterPage = () => {
       <Card style={{ width: "400px" }}>
         <Card.Body>
           <h2 className="text-center mb-4">Регистрация</h2>
-          {error && <Alert variant="danger">{error}</Alert>}
+          {message && <Alert variant="danger">{message}</Alert>}
           <Form onSubmit={handleSubmit}>
             {error && <Alert variant="danger">{error}</Alert>}
             <Form.Group className="mb-3">

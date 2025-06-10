@@ -35,7 +35,6 @@ const LoginPage = () => {
       <Card style={{ width: "400px" }}>
         <Card.Body>
           <h2 className="text-center mb-4">Вход</h2>
-          {error && <Alert variant="danger">{error}</Alert>}
           <Form onSubmit={handleSubmit}>
             {error && <Alert variant="danger">{error}</Alert>}
             <Form.Group className="mb-3">

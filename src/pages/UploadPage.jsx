@@ -6,9 +6,6 @@ import { getAllCategories, getMediaById, updateMedia, postMedia } from "../api/r
 import { useSelector } from "react-redux";
 
 const UploadPage = () => {
-  const { mediaId } = useParams();
-  const navigate = useNavigate();
-  const { token } = useSelector((state) => state.auth);
   const [isEditing, setIsEditing] = useState(false);
   const [file, setFile] = useState(null);
   const [categories, setCategories] = useState([]);
@@ -18,6 +15,12 @@ const UploadPage = () => {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+
+  const { mediaId } = useParams();
+
+  const navigate = useNavigate();
+
+  const { token, username } = useSelector((state) => state.auth);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -59,20 +62,34 @@ const UploadPage = () => {
       const data = new FormData();
       data.append("title", formData.title);
       data.append("categoryId", formData.categoryId);
+      data.append("authorName", username);
 
       if (isEditing) {
         await updateMedia(mediaId, data, token);
-        navigate("/profile");
+        navigate("/profile", { state: { modalData: { message: "Успешно обновлено.", variant: "success" } } });
       } else {
         data.append("music", file);
         await postMedia(data, token);
-        navigate("/profile");
-        alert("Файл успешно загружен!");
+        navigate("/profile", { state: { modalData: { message: "Успешно добавлено.", variant: "success" } } });
       }
     } catch (err) {
       setError(err.response?.data?.error || "Ошибка загрузки");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleFileUpload = (file) => {
+    if (!file) return;
+
+    const fileType = file.type;
+    console.log(fileType);
+    if (fileType !== "audio/mpeg") {
+      setError("Неподдерживаемый файл.");
+      return;
+    } else {
+      setError("");
+      setFile(file);
     }
   };
 
@@ -114,13 +131,13 @@ const UploadPage = () => {
         {!isEditing ? (
           <div>
             <Form.Label>Файл</Form.Label>
-            <Form.Control type="file" onChange={(e) => setFile(e.target.files[0])} required />
+            <Form.Control type="file" onChange={(e) => handleFileUpload(e.target.files[0])} required />
           </div>
         ) : (
           <></>
         )}
       </Form.Group>
-      <Button className="mt-3" type="submit" disabled={isLoading}>
+      <Button className="mt-3" type="submit" disabled={isLoading || error}>
         {isLoading ? <Spinner size="sm" variant="warning" /> : !isEditing ? "Загрузить" : "Обновить"}
       </Button>
     </Form>

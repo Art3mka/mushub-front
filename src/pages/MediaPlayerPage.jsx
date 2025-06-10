@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Spinner } from "react-bootstrap";
-import { getMediaById } from "../api/requests";
+import { getMediaById, incrementListens } from "../api/requests";
 
 import usePlayLimit from "../hooks/usePlayLimit";
 
@@ -12,6 +12,8 @@ import AddToPlaylist from "../components/AddToPlaylist";
 const MediaPlayerPage = () => {
   const { checkPlayLimit } = usePlayLimit();
   const { mediaId } = useParams();
+  const [isIncremented, setIsIncremented] = useState(false);
+  const [listens, setListens] = useState(null);
   const [media, setMedia] = useState(null);
   const [error, setError] = useState("");
 
@@ -20,13 +22,27 @@ const MediaPlayerPage = () => {
       try {
         const res = await getMediaById(mediaId);
         setMedia(res);
+        setListens(res.listens);
       } catch (err) {
         setError(err.response?.data?.error || "Ошибка загрузки");
       }
     };
     fetchMedia();
-    checkPlayLimit();
+    // checkPlayLimit();
   }, [mediaId]);
+
+  const handlePlay = async () => {
+    if (!isIncremented) {
+      try {
+        const res = await incrementListens(mediaId);
+        setIsIncremented(true);
+        setListens(res);
+        checkPlayLimit();
+      } catch (err) {
+        setError(err.response?.data?.error || "Ошибка загрузки");
+      }
+    }
+  };
 
   if (error) return <div className="alert alert-danger">{error}</div>;
   if (!media)
@@ -39,15 +55,15 @@ const MediaPlayerPage = () => {
   return (
     <div>
       <h2>
-        {media.title} - {media.authorId.name}
+        {media.title} - {media.authorId?.name || media.authorName}
       </h2>
       <p>
         Категория: <strong>{media.categoryId.title}</strong>
       </p>
-      <p>Прослушиваний: {media.listens}</p>
+      <p>Прослушиваний: {listens}</p>
 
       <div className="player-wrapper">
-        <audio controls crossOrigin="anonymous" className="w-100">
+        <audio onPlay={handlePlay} controls disabled={true} crossOrigin="anonymous" className="w-100">
           <source src={`https://mushub-back-production.up.railway.app/media/${media.filename}`} type={media.mimetype} />
         </audio>
       </div>

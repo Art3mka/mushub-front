@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const MediaList = ({ media }) => {
   if (media.length === 0) {
-    return <div className="text-center my-5">Пользователь ничего не загружал</div>;
+    return <div className="text-center my-5">Пользователь ничего не добавлял</div>;
   }
 
   return (

@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const url = "https://mushub-back-production.up.railway.app";
-// const url = "http://localhost:8000";
+// const url = "https://mushub-back-production.up.railway.app";
+const url = "http://localhost:8000";
 
 export const verifyToken = async (token) => {
   const { data } = await axios.get(`${url}/api/auth/verify`, {
@@ -145,6 +145,12 @@ export const updateMedia = async (mediaId, mediaData, token) => {
 
 export const getMediaById = async (mediaId) => {
   const { data } = await axios.get(`${url}/api/media/${mediaId}`);
+
+  return data;
+};
+
+export const incrementListens = async (mediaId) => {
+  const { data } = await axios.post(`${url}/api/media/${mediaId}/listens`);
 
   return data;
 };

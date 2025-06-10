@@ -29,7 +29,7 @@ const usePlayLimit = () => {
 
     const currentCount = Number(localStorage.getItem("listensCount") || 0);
     if (currentCount >= 10) {
-      navigate("/register");
+      navigate("/register", { state: { message: "Исчерпан лимит прослушиваний на сегодня." } });
       return false;
     }
 

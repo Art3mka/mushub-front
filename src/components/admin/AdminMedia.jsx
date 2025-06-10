@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Form, Modal, Dropdown } from "react-bootstrap";
+import { Table, Button, Form, Modal, Dropdown, Spinner } from "react-bootstrap";
 import { getAllMedia, getAllCategories, updateMedia, deleteMedia } from "../../api/requests";
 import { useSelector } from "react-redux";
 
@@ -12,6 +12,9 @@ const AdminMedia = () => {
   const [categoryId, setCategoryId] = useState(null);
   const [categoryTitle, setCategoryTitle] = useState("");
   const [error, setError] = useState("");
+  const [isShow, setIsShow] = useState(false);
+  const [mediaId, setMediaId] = useState(null);
+  const [isPending, setIsPending] = useState(false);
 
   const { token } = useSelector((state) => state.auth);
 
@@ -38,25 +41,42 @@ const AdminMedia = () => {
     fetchCategories();
   }, []);
 
+  const handleClose = () => {
+    setIsShow(false);
+  };
+
+  const handleShow = (mediaId) => {
+    setMediaId(mediaId);
+    setIsShow(true);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      setIsPending(true);
       if (editingMedia) {
         await updateMedia(editingMedia._id, { title, categoryId }, token);
       }
-      setShowModal(false);
-      fetchMedias();
     } catch (err) {
       setError(err.response?.data?.error || "Ошибка загрузки");
+    } finally {
+      setIsPending(false);
+      setShowModal(false);
+      fetchMedias();
     }
   };
 
   const handleDeleteMedia = async (id) => {
     try {
+      setIsPending(true);
       await deleteMedia(id, token);
       fetchMedias();
     } catch (err) {
       setError(err.response?.data?.error || "Ошибка загрузки");
+    } finally {
+      setIsPending(false);
+      setIsShow(false);
+      fetchMedias();
     }
   };
 
@@ -88,7 +108,7 @@ const AdminMedia = () => {
                 >
                   Редактировать
                 </Button>
-                <Button variant="danger" onClick={() => handleDeleteMedia(media._id)}>
+                <Button variant="danger" onClick={() => handleShow(media._id)}>
                   Удалить
                 </Button>
               </td>
@@ -102,38 +122,65 @@ const AdminMedia = () => {
           <Modal.Title>{editingMedia ? "Редактировать" : "Добавить"} трек</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form onSubmit={handleSubmit}>
-            <Form.Group>
-              <Form.Label>Название</Form.Label>
-              <Form.Control type="text" value={title} onChange={(e) => setTitle(e.target.value)} required />
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>Категория</Form.Label>
+          {isPending ? (
+            <div className="d-flex justify-content-center">
+              <Spinner variant="warning" animation="border" />
+            </div>
+          ) : (
+            <Form onSubmit={handleSubmit}>
+              <Form.Group>
+                <Form.Label>Название</Form.Label>
+                <Form.Control type="text" value={title} onChange={(e) => setTitle(e.target.value)} required />
+              </Form.Group>
+              <Form.Group>
+                <Form.Label>Категория</Form.Label>
 
-              <Dropdown>
-                <Dropdown.Toggle variant="success">
-                  {categoryTitle ? categoryTitle : "Выбери категорию"}
-                </Dropdown.Toggle>
-                <Dropdown.Menu style={{ maxHeight: "200px", overflowY: "auto" }}>
-                  {categories.map((category) => (
-                    <Dropdown.Item
-                      key={category._id}
-                      onClick={() => {
-                        setCategoryId(category._id);
-                        setCategoryTitle(category.title);
-                      }}
-                    >
-                      {category.title}
-                    </Dropdown.Item>
-                  ))}
-                </Dropdown.Menu>
-              </Dropdown>
-            </Form.Group>
-            <Button type="submit" className="mt-3">
-              Сохранить
-            </Button>
-          </Form>
+                <Dropdown>
+                  <Dropdown.Toggle variant="success">
+                    {categoryTitle ? categoryTitle : "Выбери категорию"}
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu style={{ maxHeight: "200px", overflowY: "auto" }}>
+                    {categories.map((category) => (
+                      <Dropdown.Item
+                        key={category._id}
+                        onClick={() => {
+                          setCategoryId(category._id);
+                          setCategoryTitle(category.title);
+                        }}
+                      >
+                        {category.title}
+                      </Dropdown.Item>
+                    ))}
+                  </Dropdown.Menu>
+                </Dropdown>
+              </Form.Group>
+              <Button type="submit" className="mt-3">
+                Сохранить
+              </Button>
+            </Form>
+          )}
         </Modal.Body>
+      </Modal>
+
+      <Modal show={isShow} onHide={handleClose} style={{ marginTop: "40px" }}>
+        <Modal.Header closeButton></Modal.Header>
+        <Modal.Body>
+          {isPending ? (
+            <div className="d-flex justify-content-center">
+              <Spinner variant="warning" animation="border" />
+            </div>
+          ) : (
+            "Вы уверены, что хотите удалить?"
+          )}
+        </Modal.Body>
+        <Modal.Footer className="d-flex justify-content-space-between">
+          <Button disabled={isPending} variant="success" onClick={() => handleDeleteMedia(mediaId)}>
+            Да
+          </Button>
+          <Button disabled={isPending} variant="danger" onClick={handleClose}>
+            Отмена
+          </Button>
+        </Modal.Footer>
       </Modal>
     </div>
   );
